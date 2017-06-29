@@ -87,19 +87,19 @@ union isa_t
     // uintptr_t extraBytes : 1;  // allocated with extra bytes
 
 # if __arm64__
-#   define ISA_MASK        0x0000000ffffffff8ULL
-#   define ISA_MAGIC_MASK  0x000003f000000001ULL
-#   define ISA_MAGIC_VALUE 0x000001a000000001ULL
+#   define ISA_MASK        0x0000000ffffffff8ULL    // 获取isa指针
+#   define ISA_MAGIC_MASK  0x000003f000000001ULL    // magic掩码
+#   define ISA_MAGIC_VALUE 0x000001a000000001ULL    // 获取magic值
     struct {
-        uintptr_t nonpointer        : 1;
-        uintptr_t has_assoc         : 1;
-        uintptr_t has_cxx_dtor      : 1;
-        uintptr_t shiftcls          : 33; // MACH_VM_MAX_ADDRESS 0x1000000000
-        uintptr_t magic             : 6;
-        uintptr_t weakly_referenced : 1;
-        uintptr_t deallocating      : 1;
-        uintptr_t has_sidetable_rc  : 1;
-        uintptr_t extra_rc          : 19;
+        uintptr_t nonpointer        : 1;    // 是否启用tagged pointer
+        uintptr_t has_assoc         : 1;    // 是否有关联引用，没有关联引用可以更快的释放内存
+        uintptr_t has_cxx_dtor      : 1;    // 是否含有析构器
+        uintptr_t shiftcls          : 33;   // MACH_VM_MAX_ADDRESS 0x1000000000 33位用于存储objc_class的指针
+        uintptr_t magic             : 6;    // 对象是否完成初始化
+        uintptr_t weakly_referenced : 1;    // 对象是否有弱引用指向它
+        uintptr_t deallocating      : 1;    // 对象是否正在释放
+        uintptr_t has_sidetable_rc  : 1;    // 判断引用计数是否过大，否则需要散列表来进行管理
+        uintptr_t extra_rc          : 19;   // 存放对象当前引用计数 - 1 后的值，如当前引用计数为3，则extra_rc的值为2
 #       define RC_ONE   (1ULL<<45)
 #       define RC_HALF  (1ULL<<18)
     };
@@ -167,7 +167,7 @@ union isa_t
 
 struct objc_object {
 private:
-    isa_t isa;
+    isa_t isa;  // isa是一个union
 
 public:
 

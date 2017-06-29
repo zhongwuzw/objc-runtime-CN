@@ -309,6 +309,7 @@ _objc_makeTaggedPointer(objc_tag_index_t tag, uintptr_t value)
     // assert(_objc_taggedPointersEnabled());
     if (tag <= OBJC_TAG_Last60BitPayload) {
         // assert(((value << _OBJC_TAG_PAYLOAD_RSHIFT) >> _OBJC_TAG_PAYLOAD_LSHIFT) == value);
+        // 将最高位置1，并将4位tag移动到最高4位
         return (void*)
             (_OBJC_TAG_MASK | 
              ((uintptr_t)tag << _OBJC_TAG_INDEX_SHIFT) | 
@@ -324,8 +325,13 @@ _objc_makeTaggedPointer(objc_tag_index_t tag, uintptr_t value)
     }
 }
 
+// arm64: 运行时新的特性，采用MSB，利用高4位来做标记，最高位为1，表明为Tagged pointer，剩余的3位用于标识该pointer对应的类的类型，余下的60位用来存储数据内容。
+// Tagged pointer只在64位上实现。
+// 使用Tagged pointer，由于数据存储在指针里，所以不需要多余的内存分配，访问数据时不需要间接的访问，不需要引用计数进行管理。
+// 从"objc-internal.h"的objc_tag_index_t枚举值中可以看到有哪些对象使用了Tagged pointer。
+// 可参考：https://www.mikeash.com/pyblog/friday-qa-2012-07-27-lets-build-tagged-pointers.html，https://www.mikeash.com/pyblog/friday-qa-2015-07-31-tagged-pointer-strings.html
 static inline bool 
-_objc_isTaggedPointer(const void *ptr) 
+_objc_isTaggedPointer(const void *ptr)
 {
     return ((intptr_t)ptr & _OBJC_TAG_MASK) == _OBJC_TAG_MASK;
 }

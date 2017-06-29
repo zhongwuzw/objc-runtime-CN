@@ -305,12 +305,12 @@ _objc_debug_taggedpointer_ext_classes:
 	UNWIND _objc_msgSend, NoFrame
 	MESSENGER_START
 
-	cmp	x0, #0			// nil check and tagged pointer check
+	cmp	x0, #0			// nil check and tagged pointer check   检测消息的target是否为nil或Tagged pointer
 	b.le	LNilOrTagged		//  (MSB tagged pointer looks negative)
 	ldr	x13, [x0]		// x13 = isa
 	and	x16, x13, #ISA_MASK	// x16 = class	
 LGetIsaDone:
-	CacheLookup NORMAL		// calls imp or objc_msgSend_uncached
+	CacheLookup NORMAL		// calls imp or objc_msgSend_uncached   查找selector并调用imp
 
 LNilOrTagged:
 	b.eq	LReturnZero		// nil check
@@ -449,7 +449,7 @@ LLookup_Nil:
 
 	// receiver and selector already in x0 and x1
 	mov	x2, x16
-	bl	__class_lookupMethodAndLoadCache3
+	bl	__class_lookupMethodAndLoadCache3   //调用C的_class_lookupMethodAndLoadCache3函数
 
 	// imp in x0
 	mov	x17, x0

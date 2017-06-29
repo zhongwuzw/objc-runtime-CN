@@ -50,9 +50,9 @@ public:
 
 
 struct cache_t {
-    struct bucket_t *_buckets;
-    mask_t _mask;
-    mask_t _occupied;
+    struct bucket_t *_buckets;  // 每一个bucket_t包含一对key->value,key是unsigned long类型，value是IMP（函数指针）
+    mask_t _mask;   // bucket_t总数
+    mask_t _occupied;   // 实际占用的bucket_t总数
 
 public:
     struct bucket_t *buckets();
@@ -205,9 +205,9 @@ struct entsize_list_tt {
 
 
 struct method_t {
-    SEL name;
-    const char *types;
-    IMP imp;
+    SEL name;   // 方法名
+    const char *types;  // type encodings
+    IMP imp;    // 函数实现指针
 
     struct SortBySELAddress :
         public std::binary_function<const method_t&,
@@ -228,7 +228,7 @@ struct ivar_t {
     // Some code uses all 64 bits. class_addIvar() over-allocates the 
     // offset for their benefit.
 #endif
-    int32_t *offset;
+    int32_t *offset;    // 相对于基地址的偏移，用于解决non-fragile 基类问题
     const char *name;
     const char *type;
     // alignment is sometimes -1; use alignment() instead
@@ -525,6 +525,7 @@ struct locstamped_category_list_t {
 #endif
 
 
+// ro只读，用来存储默认的属性、方法和协议
 struct class_ro_t {
     uint32_t flags;
     uint32_t instanceStart;
@@ -694,7 +695,8 @@ class list_array_tt {
 
     void attachLists(List* const * addedLists, uint32_t addedCount) {
         if (addedCount == 0) return;
-
+        
+        // 创建一个新数组，将新增的列表放到数组前面，原来的列表放到新增的后面
         if (hasArray()) {
             // many lists -> many lists
             uint32_t oldCount = array()->count;
@@ -798,12 +800,13 @@ class protocol_array_t :
 };
 
 
+// rm可读写
 struct class_rw_t {
     // Be warned that Symbolication knows the layout of this structure.
     uint32_t flags;
     uint32_t version;
 
-    const class_ro_t *ro;
+    const class_ro_t *ro;   // ro是指向常量class_ro_t的指针，既ro指向的结构体是无法被修改的
 
     method_array_t methods;
     property_array_t properties;
@@ -1064,7 +1067,7 @@ public:
 struct objc_class : objc_object {
     // Class ISA;
     Class superclass;
-    cache_t cache;             // formerly cache pointer and vtable
+    cache_t cache;             // formerly cache pointer and vtable  selector缓存
     class_data_bits_t bits;    // class_rw_t * plus custom rr/alloc flags
 
     class_rw_t *data() { 
@@ -1324,7 +1327,7 @@ struct swift_class_t : objc_class {
 
 
 struct category_t {
-    const char *name;
+    const char *name;   // 是类的名字，不是类别的名字
     classref_t cls;
     struct method_list_t *instanceMethods;
     struct method_list_t *classMethods;

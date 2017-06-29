@@ -192,6 +192,8 @@ using namespace objc_references_support;
 
 spinlock_t AssociationsManagerLock;
 
+// AssociationsManager管理所有的关联引用，包含一个静态map，key是对象的指针，value是另外一个map，该map则保存着该对象相关的关联引用kv对
+
 class AssociationsManager {
     // associative references: object pointer -> PtrPtrHashMap.
     static AssociationsHashMap *_map;

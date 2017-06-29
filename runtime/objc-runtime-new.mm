@@ -1823,7 +1823,7 @@ static Class realizeClass(Class cls)
         addRootClass(cls);
     }
 
-    // Attach categories
+    // Attach categories    从类ro或category中加载属性、协议、方法到class_rw_t中
     methodizeClass(cls);
 
     return cls;
@@ -2022,6 +2022,7 @@ map_images(unsigned count, const char * const paths[],
 /***********************************************************************
 * load_images
 * Process +load in the given images which are being mapped in by dyld.
+* 处理Image中的+load方法，+load方法在类别处理完后调用
 *
 * Locking: write-locks runtimeLock and loadMethodLock
 **********************************************************************/
@@ -2548,8 +2549,9 @@ void _read_images(header_info **hList, uint32_t hCount, int totalClasses, int un
 
     ts.log("IMAGE TIMES: realize future classes");
 
-    // Discover categories. 
+    // Discover categories. 查找类别
     for (EACH_HEADER) {
+        // 从Image的__DATA段中读取类别列表
         category_t **catlist = 
             _getObjc2CategoryList(hi, &count);
         bool hasClassProperties = hi->info()->hasCategoryClassProperties();
@@ -2578,6 +2580,7 @@ void _read_images(header_info **hList, uint32_t hCount, int totalClasses, int un
             if (cat->instanceMethods ||  cat->protocols  
                 ||  cat->instanceProperties) 
             {
+                // 增加到类对象中
                 addUnattachedCategoryForClass(cat, cls, hi);
                 if (cls->isRealized()) {
                     remethodizeClass(cls);
@@ -2593,6 +2596,7 @@ void _read_images(header_info **hList, uint32_t hCount, int totalClasses, int un
             if (cat->classMethods  ||  cat->protocols  
                 ||  (hasClassProperties && cat->_classProperties)) 
             {
+                // 增加到元类中
                 addUnattachedCategoryForClass(cat, cls->ISA(), hi);
                 if (cls->ISA()->isRealized()) {
                     remethodizeClass(cls->ISA());
@@ -4608,7 +4612,8 @@ IMP lookUpImpOrForward(Class cls, SEL sel, id inst,
     // behalf of the category.
 
     runtimeLock.read();
-
+    
+    // 判断class是否已初始化
     if (!cls->isRealized()) {
         // Drop the read-lock and acquire the write-lock.
         // realizeClass() checks isRealized() again to prevent
@@ -4622,6 +4627,7 @@ IMP lookUpImpOrForward(Class cls, SEL sel, id inst,
         runtimeLock.read();
     }
 
+    // 若+initialize未调用，则按需调用+initialize方法
     if (initialize  &&  !cls->isInitialized()) {
         runtimeLock.unlockRead();
         _class_initialize (_class_getNonMetaClass(cls, inst));
@@ -6293,7 +6299,7 @@ void *objc_destructInstance(id obj)
 
         // This order is important.
         if (cxx) object_cxxDestruct(obj);
-        if (assoc) _object_remove_assocations(obj);
+        if (assoc) _object_remove_assocations(obj); // 移除对象相关的关联引用
         obj->clearDeallocating();
     }
 

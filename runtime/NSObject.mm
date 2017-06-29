@@ -216,6 +216,7 @@ void SideTable::unlockTwo<DontHaveOld, DoHaveNew>
 alignas(StripedMap<SideTable>) static uint8_t 
     SideTableBuf[sizeof(StripedMap<SideTable>)];
 
+// 在处理第一个dyld加载的Runtime Image时进行初始化
 static void SideTableInit() {
     new (SideTableBuf) StripedMap<SideTable>();
 }

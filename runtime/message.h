@@ -37,7 +37,7 @@
 /// Specifies the superclass of an instance. 
 struct objc_super {
     /// Specifies an instance of a class.
-    __unsafe_unretained id receiver;
+    __unsafe_unretained id receiver;    // 存放target实例
 
     /// Specifies the particular superclass of the instance to message. 
 #if !defined(__cplusplus)  &&  !__OBJC2__
