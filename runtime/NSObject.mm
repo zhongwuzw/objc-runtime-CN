@@ -142,8 +142,8 @@ enum HaveNew { DontHaveNew = false, DoHaveNew = true };
 
 struct SideTable {
     spinlock_t slock;
-    RefcountMap refcnts;
-    weak_table_t weak_table;
+    RefcountMap refcnts;    // 引用计数表，存储当前对象的引用计数
+    weak_table_t weak_table;    // 维护和存储指向当前对象的所有弱引用
 
     SideTable() {
         memset(&weak_table, 0, sizeof(weak_table));

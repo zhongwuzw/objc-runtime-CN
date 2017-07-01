@@ -503,6 +503,7 @@ bucket_t * cache_t::find(cache_key_t k, id receiver)
     mask_t begin = cache_hash(k, m);
     mask_t i = begin;
     do {
+        // 找到空的bucket或key相同的bucket
         if (b[i].key() == 0  ||  b[i].key() == k) {
             return &b[i];
         }
@@ -514,6 +515,7 @@ bucket_t * cache_t::find(cache_key_t k, id receiver)
 }
 
 
+// 容量翻倍，注意，扩容的过程中，原Cache会被释放掉，既不会保留以前的缓存
 void cache_t::expand()
 {
     cacheUpdateLock.assertLocked();
@@ -531,6 +533,7 @@ void cache_t::expand()
 }
 
 
+// 将sel,imp加入缓存
 static void cache_fill_nolock(Class cls, SEL sel, IMP imp, id receiver)
 {
     cacheUpdateLock.assertLocked();
@@ -543,20 +546,20 @@ static void cache_fill_nolock(Class cls, SEL sel, IMP imp, id receiver)
     if (cache_getImp(cls, sel)) return;
 
     cache_t *cache = getCache(cls);
-    cache_key_t key = getKey(sel);
+    cache_key_t key = getKey(sel); // key就是SEL
 
     // Use the cache as-is if it is less than 3/4 full
     mask_t newOccupied = cache->occupied() + 1;
     mask_t capacity = cache->capacity();
     if (cache->isConstantEmptyCache()) {
         // Cache is read-only. Replace it.
-        cache->reallocate(capacity, capacity ?: INIT_CACHE_SIZE);
+        cache->reallocate(capacity, capacity ?: INIT_CACHE_SIZE);   // 初始大小为4
     }
     else if (newOccupied <= capacity / 4 * 3) {
         // Cache is less than 3/4 full. Use it as-is.
     }
     else {
-        // Cache is too full. Expand it.
+        // Cache is too full. Expand it.    当剩余容量小于1/4时，扩充缓存
         cache->expand();
     }
 

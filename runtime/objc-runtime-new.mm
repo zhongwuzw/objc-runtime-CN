@@ -1705,6 +1705,7 @@ static void reconcileInstanceVariables(Class cls, Class supercls, const class_ro
 
 
 /***********************************************************************
+* 类初始化
 * realizeClass
 * Performs first-time initialization on class cls, 
 * including allocating its read-write data.
@@ -1727,6 +1728,7 @@ static Class realizeClass(Class cls)
 
     // fixme verify class is not in an un-dlopened part of the shared cache?
 
+    // ro初始地址为rw的地址，所以通过强制转换来获取ro
     ro = (const class_ro_t *)cls->data();
     if (ro->flags & RO_FUTURE) {
         // This was a future class. rw data is already allocated.
@@ -1737,7 +1739,7 @@ static Class realizeClass(Class cls)
         // Normal class. Allocate writeable class data.
         rw = (class_rw_t *)calloc(sizeof(class_rw_t), 1);
         rw->ro = ro;
-        rw->flags = RW_REALIZED|RW_REALIZING;
+        rw->flags = RW_REALIZED|RW_REALIZING;   // 设置已初始化标志位
         cls->setData(rw);
     }
 
@@ -4390,6 +4392,7 @@ class_setVersion(Class cls, int version)
 }
 
 
+// 二分法查找
 static method_t *findMethodInSortedMethodList(SEL key, const method_list_t *list)
 {
     assert(list);
@@ -4642,12 +4645,12 @@ IMP lookUpImpOrForward(Class cls, SEL sel, id inst,
  retry:    
     runtimeLock.assertReading();
 
-    // Try this class's cache.
+    // Try this class's cache.  从当前类的缓存中查找
 
     imp = cache_getImp(cls, sel);
     if (imp) goto done;
 
-    // Try this class's method lists.
+    // Try this class's method lists.   从当前类的方法列表中查找
     {
         Method meth = getMethodNoSuper_nolock(cls, sel);
         if (meth) {
@@ -4657,9 +4660,10 @@ IMP lookUpImpOrForward(Class cls, SEL sel, id inst,
         }
     }
 
-    // Try superclass caches and method lists.
+    // Try superclass caches and method lists.  从父类的缓存和方法列表中查找
     {
         unsigned attempts = unreasonableClassCount();
+        // curClass是从cls开始的，应该从cls->superclass开始，这应该是个bug
         for (Class curClass = cls;
              curClass != nil;
              curClass = curClass->superclass)
@@ -4695,7 +4699,7 @@ IMP lookUpImpOrForward(Class cls, SEL sel, id inst,
         }
     }
 
-    // No implementation found. Try method resolver once.
+    // No implementation found. Try method resolver once.   调用+resolveInstanceMethod方法
 
     if (resolver  &&  !triedResolver) {
         runtimeLock.unlockRead();

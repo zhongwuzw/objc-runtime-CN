@@ -1104,6 +1104,7 @@ struct objc_class : objc_object {
     void setHasCustomRR(bool inherited = false);
     void printCustomRR(bool inherited);
 
+    // AllocWithZone
     bool hasCustomAWZ() {
         return ! bits.hasDefaultAWZ();
     }

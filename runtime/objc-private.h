@@ -91,7 +91,7 @@ union isa_t
 #   define ISA_MAGIC_MASK  0x000003f000000001ULL    // magic掩码
 #   define ISA_MAGIC_VALUE 0x000001a000000001ULL    // 获取magic值
     struct {
-        uintptr_t nonpointer        : 1;    // 是否启用tagged pointer
+        uintptr_t nonpointer        : 1;    // 是否是原始指针，0表示isa就是类的真实地址，1表示isa指向的是结构体，其指针保存在shiftcls中
         uintptr_t has_assoc         : 1;    // 是否有关联引用，没有关联引用可以更快的释放内存
         uintptr_t has_cxx_dtor      : 1;    // 是否含有析构器
         uintptr_t shiftcls          : 33;   // MACH_VM_MAX_ADDRESS 0x1000000000 33位用于存储objc_class的指针

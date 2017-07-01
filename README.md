@@ -12,6 +12,52 @@ Source code from [objc runtime](https://opensource.apple.com/tarballs/objc4/), I
 
 ***objc4-709***
 
+## 附录
+-----
+
+1. 查找方法实现时的方法`IMP lookUpImpOrForward(Class, SEL, id, bool, bool, bool)`存在一个`bug`,当在当前类的缓存或方法列表中找不到`IMP`时，将从类的父类继续查找，代码中的`for`循环，`curClass`从`cls`开始，这就导致又需要在当前类的缓存或列表中查找一次，这一次是完全没有必要的，所以`curClass`初始值的正确方法为`Class curClass = cls->superclass;`：
+    
+```
+    // Try superclass caches and method lists.  从父类的缓存和方法列表中查找
+    {
+        unsigned attempts = unreasonableClassCount();
+        // curClass是从cls开始的，应该从cls->superclass开始，这应该是个bug
+        for (Class curClass = cls;
+             curClass != nil;
+             curClass = curClass->superclass)
+        {
+            // Halt if there is a cycle in the superclass chain.
+            if (--attempts == 0) {
+                _objc_fatal("Memory corruption in class list.");
+            }
+            
+            // Superclass cache.
+            imp = cache_getImp(curClass, sel);
+            if (imp) {
+                if (imp != (IMP)_objc_msgForward_impcache) {
+                    // Found the method in a superclass. Cache it in this class.
+                    log_and_fill_cache(cls, imp, sel, inst, curClass);
+                    goto done;
+                }
+                else {
+                    // Found a forward:: entry in a superclass.
+                    // Stop searching, but don't cache yet; call method 
+                    // resolver for this class first.
+                    break;
+                }
+            }
+            
+            // Superclass method list.
+            Method meth = getMethodNoSuper_nolock(curClass, sel);
+            if (meth) {
+                log_and_fill_cache(cls, meth->imp, sel, inst, curClass);
+                imp = meth->imp;
+                goto done;
+            }
+        }
+    }
+```
+
 ## License
 -----
 
