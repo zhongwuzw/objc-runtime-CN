@@ -379,7 +379,7 @@ void _class_initialize(Class cls)
     bool reallyInitialize = NO;
 
     // Make sure super is done initializing BEFORE beginning to initialize cls.
-    // See note about deadlock above.
+    // See note about deadlock above.   递归调用父类的+initialize方法
     supercls = cls->superclass;
     if (supercls  &&  !supercls->isInitialized()) {
         _class_initialize(supercls);
@@ -411,6 +411,7 @@ void _class_initialize(Class cls)
         // Exceptions: A +initialize call that throws an exception 
         // is deemed to be a complete and successful +initialize.
         @try {
+            // 向当前类发送+initialize消息，所以如当前类和其类别都实现了+initialize方法时，会调用类别的+initialize方法
             callInitialize(cls);
 
             if (PrintInitializing) {

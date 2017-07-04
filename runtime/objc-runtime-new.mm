@@ -1199,7 +1199,7 @@ static void addRemappedClass(Class oldcls, Class newcls)
 * remapClass
 * Returns the live class pointer for cls, which may be pointing to 
 * a class struct that has been reallocated.
-* Returns nil if cls is ignored because of weak linking.
+* Returns nil if cls is ignored because of weak linking.    更多关于weak linking, 可参考：https://stackoverflow.com/questions/16922013/what-does-it-mean-to-weak-link-a-framework
 * Locking: runtimeLock must be read- or write-locked by the caller
 **********************************************************************/
 static Class remapClass(Class cls)
@@ -2701,7 +2701,7 @@ static void schedule_class_load(Class cls)
 
     if (cls->data()->flags & RW_LOADED) return;
 
-    // Ensure superclass-first ordering
+    // Ensure superclass-first ordering 递归，父类优先
     schedule_class_load(cls->superclass);
 
     add_class_to_loadable_list(cls);

@@ -140,10 +140,12 @@ typedef objc::DenseMap<DisguisedPtr<objc_object>,size_t,true> RefcountMap;
 enum HaveOld { DontHaveOld = false, DoHaveOld = true };
 enum HaveNew { DontHaveNew = false, DoHaveNew = true };
 
+// strong 引用计数流程，一个全局的存储SideTable的hash table,hash table可以容纳64个SideTable，依据对象的地址做映射，映射到某个SideTable，每个SideTable管理一个refconts成员变量，该变量同样是一个hash table,再次依据对象的地址做映射，存储的值即为引用相关的计数
+// weak 引用计数流程，和strong类似，同样是hash table嵌套hash table
 struct SideTable {
     spinlock_t slock;
-    RefcountMap refcnts;    // 引用计数表，存储当前对象的引用计数
-    weak_table_t weak_table;    // 维护和存储指向当前对象的所有弱引用
+    RefcountMap refcnts;    // 引用计数表，存储引用计数
+    weak_table_t weak_table;    // 维护和存储弱引用 key为弱引用指向对象的指针，value为weak_entry_t，里面保存着所有弱引用的地址，weak_table是一个动态缩放的hash table，随着使用弱引用的对象数量的增多和减少来resize weak_table
 
     SideTable() {
         memset(&weak_table, 0, sizeof(weak_table));
@@ -669,6 +671,7 @@ struct magic_t {
 };
     
 
+// AutoreleasePoolPage组成了一个双向链表，通过双向链表来实现一个栈，每一个AutoreleasePoolPage占用的大小都为4096B，AutoreleasePoolPage成员内存后的剩余空间用来存储加入自动释放池的对象指针，或压入新的AutoreleasePoolPage（压入POOL_BOUNDARY）
 class AutoreleasePoolPage 
 {
     // EMPTY_POOL_PLACEHOLDER is stored in TLS when exactly one pool is 
@@ -678,7 +681,7 @@ class AutoreleasePoolPage
 #   define EMPTY_POOL_PLACEHOLDER ((id*)1)
 
 #   define POOL_BOUNDARY nil
-    static pthread_key_t const key = AUTORELEASE_POOL_KEY;
+    static pthread_key_t const key = AUTORELEASE_POOL_KEY;  // 注意，类实例创建时静态成员变量不占用内存
     static uint8_t const SCRIBBLE = 0xA3;  // 0xA3A3A3A3 after releasing
     static size_t const SIZE = 
 #if PROTECT_AUTORELEASEPOOL
@@ -927,6 +930,7 @@ class AutoreleasePoolPage
         return EMPTY_POOL_PLACEHOLDER;
     }
 
+    // hotPage相当于栈顶的AutoreleasePoolPage
     static inline AutoreleasePoolPage *hotPage() 
     {
         AutoreleasePoolPage *result = (AutoreleasePoolPage *)
@@ -960,7 +964,7 @@ class AutoreleasePoolPage
         AutoreleasePoolPage *page = hotPage();
         if (page && !page->full()) {
             return page->add(obj);
-        } else if (page) {
+        } else if (page) {  // 当前页已满，查找未满的子页，若没有，创建新的页
             return autoreleaseFullPage(obj, page);
         } else {
             return autoreleaseNoPage(obj);
@@ -1060,9 +1064,11 @@ public:
             // Each autorelease pool starts on a new pool page.
             dest = autoreleaseNewPage(POOL_BOUNDARY);
         } else {
+            // 每次push操作，都是压入一个POOL_BOUNDARY（POOL_BOUNDARY是nil的别名）来作为分割，所以一个AutoreleasePoolPage可能存在多个POOL_BOUNDARY，既包含多个push
             dest = autoreleaseFast(POOL_BOUNDARY);
         }
         assert(dest == EMPTY_POOL_PLACEHOLDER || *dest == POOL_BOUNDARY);
+        // 返回POOL_BOUNDARY的指针或EMPTY_POOL_PLACEHOLDER
         return dest;
     }
 
@@ -1627,7 +1633,7 @@ id
 objc_retain(id obj)
 {
     if (!obj) return obj;
-    if (obj->isTaggedPointer()) return obj;
+    if (obj->isTaggedPointer()) return obj; // tagged pointer不需要进行内存管理
     return obj->retain();
 }
 
@@ -1781,7 +1787,7 @@ callAlloc(Class cls, bool checkNil, bool allocWithZone=false)
             obj->initInstanceIsa(cls, dtor);
             return obj;
         }
-        else {
+        else {  // arm64都会走该语句
             // Has ctor or raw isa or something. Use the slower path.
             id obj = class_createInstance(cls, 0);
             if (slowpath(!obj)) return callBadAllocHandler(cls);

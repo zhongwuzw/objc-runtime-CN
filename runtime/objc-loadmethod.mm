@@ -44,11 +44,13 @@ struct loadable_category {
 
 // List of classes that need +load called (pending superclass +load)
 // This list always has superclasses first because of the way it is constructed
+// loadable_classes是一个数组，元素为loadable_class，其保存类指针和+load方法的IMP
 static struct loadable_class *loadable_classes = nil;
 static int loadable_classes_used = 0;
 static int loadable_classes_allocated = 0;
 
 // List of categories that need +load called (pending parent class +load)
+// loadable_categories是一个数组，元素为loadable_category，其保存类别和+load方法的IMP
 static struct loadable_category *loadable_categories = nil;
 static int loadable_categories_used = 0;
 static int loadable_categories_allocated = 0;
@@ -73,6 +75,7 @@ void add_class_to_loadable_list(Class cls)
                      cls->nameForLogging());
     }
     
+    // 扩容
     if (loadable_classes_used == loadable_classes_allocated) {
         loadable_classes_allocated = loadable_classes_allocated*2 + 16;
         loadable_classes = (struct loadable_class *)
@@ -347,6 +350,7 @@ void call_load_methods(void)
 
     void *pool = objc_autoreleasePoolPush();
 
+    // 先调用类的+load方法，再调用类别的+load方法
     do {
         // 1. Repeatedly call class +loads until there aren't any more
         while (loadable_classes_used > 0) {

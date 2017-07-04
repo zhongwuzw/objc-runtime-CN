@@ -271,14 +271,17 @@ struct ReleaseValue {
 void _object_set_associative_reference(id object, void *key, id value, uintptr_t policy) {
     // retain the new value (if any) outside the lock.
     ObjcAssociation old_association(0, nil);
+    // acquireValue根据policy对value进行retain/copy/null操作
     id new_value = value ? acquireValue(value, policy) : nil;
     {
         AssociationsManager manager;
+        // lazy initializer
         AssociationsHashMap &associations(manager.associations());
         disguised_ptr_t disguised_object = DISGUISE(object);
         if (new_value) {
             // break any existing association.
             AssociationsHashMap::iterator i = associations.find(disguised_object);
+            // 对象拥有关联引用
             if (i != associations.end()) {
                 // secondary table exists
                 ObjectAssociationMap *refs = i->second;
@@ -294,7 +297,7 @@ void _object_set_associative_reference(id object, void *key, id value, uintptr_t
                 ObjectAssociationMap *refs = new ObjectAssociationMap;
                 associations[disguised_object] = refs;
                 (*refs)[key] = ObjcAssociation(policy, new_value);
-                object->setHasAssociatedObjects();
+                object->setHasAssociatedObjects();  // 设置标志位，表明类使用了关联引用，如对象未使用关联引用，则释放时会更快
             }
         } else {
             // setting the association to nil breaks the association.
