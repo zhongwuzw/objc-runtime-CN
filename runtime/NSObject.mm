@@ -1488,7 +1488,7 @@ objc_object::sidetable_tryRetain()
     RefcountMap::iterator it = table.refcnts.find(this);
     if (it == table.refcnts.end()) {
         table.refcnts[this] = SIDE_TABLE_RC_ONE;
-    } else if (it->second & SIDE_TABLE_DEALLOCATING) {
+    } else if (it->second & SIDE_TABLE_DEALLOCATING) {  // 若对象正在被释放，则直接返回nil，所以我们再dealloc方法中访问weak引用的话，是会得到nil的
         result = false;
     } else if (! (it->second & SIDE_TABLE_RC_PINNED)) {
         it->second += SIDE_TABLE_RC_ONE;

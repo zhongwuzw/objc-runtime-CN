@@ -10,7 +10,12 @@ Source code from [objc runtime](https://opensource.apple.com/tarballs/objc4/), I
 ## Objective-C Runtime Version
 -----
 
-***objc4-709***
+***[objc4-709](https://opensource.apple.com/tarballs/objc4/)***
+
+## CoreFoundation Version
+-----
+
+***[CF-1151.16](https://opensource.apple.com/tarballs/CF/)***
 
 ## 附录
 -----
