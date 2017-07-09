@@ -203,7 +203,7 @@ LExit$0:
 .macro CacheHit
 .if $0 == NORMAL
 	MESSENGER_END_FAST
-	br	x17			// call imp
+	br	x17			// call imp，这个时候objc_msgSend的工作就结束了
 .elseif $0 == GETIMP
 	mov	x0, x17			// return imp
 	ret
@@ -239,9 +239,10 @@ LExit$0:
 .endif
 .endmacro
 
+// 查找缓存
 .macro CacheLookup
 	// x1 = SEL, x16 = isa
-	ldp	x10, x11, [x16, #CACHE]	// x10 = buckets, x11 = occupied|mask
+	ldp	x10, x11, [x16, #CACHE]	// x10 = buckets, x11 = occupied|mask, 既11高32位位occupied，低32位位mask
 	and	w12, w1, w11		// x12 = _cmd & mask
 	add	x12, x10, x12, LSL #4	// x12 = buckets + ((_cmd & mask)<<4)
 
@@ -250,18 +251,19 @@ LExit$0:
 	b.ne	2f			//     scan more
 	CacheHit $0			// call or return imp
 	
-2:	// not hit: x12 = not-hit bucket
-	CheckMiss $0			// miss if bucket->sel == 0
+2:	// not hit: x12 = not-hit bucket    hash table有冲突的情况，buckets的处理方法是线性探测法
+	CheckMiss $0			// miss if bucket->sel == 0, bucket为空，查找失败
 	cmp	x12, x10		// wrap if bucket == buckets
 	b.eq	3f
 	ldp	x9, x17, [x12, #-16]!	// {x9, x17} = *--bucket
 	b	1b			// loop
 
 3:	// wrap: x12 = first bucket, w11 = mask
-	add	x12, x12, w11, UXTW #4	// x12 = buckets+(mask<<4)
+	add	x12, x12, w11, UXTW #4	// x12 = buckets+(mask<<4)  将搜索指针指向buckets最后一个元素，继续进行探测
 
 	// Clone scanning loop to miss instead of hang when cache is corrupt.
 	// The slow path may detect any corruption and halt later.
+    // 如上注释，之所以循环遍历没有复用，是因为buckets是可以无限增大的，所以就有可能出现内存越界的情况，导致bucket内容被破坏,所以如下JumpMiss做了一下封装，会跳到C语言做处理，以便于更好的诊断来做优化
 
 	ldp	x9, x17, [x12]		// {x9, x17} = *bucket
 1:	cmp	x9, x1			// if (bucket->sel != _cmd)
@@ -290,6 +292,18 @@ LExit$0:
  * IMP returned in x17
  * x16 reserved for our use but not used
  *
+ * 参考：https://www.mikeash.com/pyblog/friday-qa-2017-06-30-dissecting-objc_msgsend-on-arm64.html
+ * objc_msgSend方法使用汇编的原因有两个：
+ * 1：C中无法实现未知的参数个数，参数类型，在函数体类也无法调到任意的函数指针类型（类型太多了）
+ * 2：速度，首先汇编语言本质就比C快，其次，免去了大量局部变量拷贝的工作，因为参数直接存放在寄存器里，当找到IMP调用时，参数已经在寄存器里了，可以直接复用
+ *
+ * objc_msgSend步骤：
+ * 1：获取传递进来的类对象
+ * 2：获取类用来缓存方法的cache
+ * 3：使用selector在cache中查找
+ * 4：如果cache中查找不到，则跳转到C代码，进行slow search
+ * 5：调用方法的IMP
+ *
  ********************************************************************/
 
 	.data
@@ -305,8 +319,9 @@ _objc_debug_taggedpointer_ext_classes:
 	UNWIND _objc_msgSend, NoFrame
 	MESSENGER_START
 
+    // 寄存器x0~x7存储函数的首8个参数，既x0寄存器存放self，x1存放_cmd参数
 	cmp	x0, #0			// nil check and tagged pointer check   检测消息的target是否为nil或Tagged pointer
-	b.le	LNilOrTagged		//  (MSB tagged pointer looks negative)
+	b.le	LNilOrTagged		//  (MSB tagged pointer looks negative) tagged 指针最高位为1，所以导致x0的值为负数
 	ldr	x13, [x0]		// x13 = isa
 	and	x16, x13, #ISA_MASK	// x16 = class	
 LGetIsaDone:
@@ -316,7 +331,7 @@ LNilOrTagged:
 	b.eq	LReturnZero		// nil check
 
 	// tagged
-	mov	x10, #0xf000000000000000
+	mov	x10, #0xf000000000000000    // 获取tagged pointer的最高四位
 	cmp	x0, x10
 	b.hs	LExtTag
 	adrp	x10, _objc_debug_taggedpointer_classes@PAGE
