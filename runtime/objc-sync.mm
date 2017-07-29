@@ -33,7 +33,7 @@
 typedef struct SyncData {
     struct SyncData* nextData;
     DisguisedPtr<objc_object> object;
-    int32_t threadCount;  // number of THREADS using this block
+    int32_t threadCount;  // number of THREADS using this block，包括使用和正在等待获取的线程数
     recursive_mutex_t mutex;
 } SyncData;
 
@@ -57,7 +57,7 @@ typedef struct SyncCache {
  */
 
 struct SyncList {
-    SyncData *data;
+    SyncData *data; //data->next，组成链表
     spinlock_t lock;
 
     SyncList() : data(nil), lock(fork_unsafe_lock) { }
@@ -107,6 +107,7 @@ void _destroySyncCache(struct SyncCache *cache)
 }
 
 
+// 通过id对象来获取SyncData节点
 static SyncData* id2data(id object, enum usage why)
 {
     spinlock_t *lockp = &LOCK_FOR_OBJ(object);
@@ -211,6 +212,7 @@ static SyncData* id2data(id object, enum usage why)
                 OSAtomicIncrement32Barrier(&result->threadCount);
                 goto done;
             }
+            // 重用
             if ( (firstUnused == NULL) && (p->threadCount == 0) )
                 firstUnused = p;
         }
@@ -277,7 +279,14 @@ BREAKPOINT_FUNCTION(
     void objc_sync_nil(void)
 );
 
-
+// @synchronized(obj)指令相当于：
+// @try {
+//      objc_sync_enter(obj);
+//      do work
+// } @finally {
+//      objc_sync_exit(obj);
+// }
+// ---------------------------------------------------------
 // Begin synchronizing on 'obj'. 
 // Allocates recursive mutex associated with 'obj' if needed.
 // Returns OBJC_SYNC_SUCCESS once lock is acquired.  
