@@ -34,12 +34,12 @@ typedef struct SyncData {
     struct SyncData* nextData;
     DisguisedPtr<objc_object> object;
     int32_t threadCount;  // number of THREADS using this block，包括使用和正在等待获取的线程数
-    recursive_mutex_t mutex;
+    recursive_mutex_t mutex;    // 使用递归锁，这样就保证了@synchronize可重入的特性
 } SyncData;
 
 typedef struct {
     SyncData *data;
-    unsigned int lockCount;  // number of times THIS THREAD locked this block
+    unsigned int lockCount;  // number of times THIS THREAD locked this block 手动管理线程对object调用了@synchronize的次数，当lockCount为0时，将item从线程数据中移除
 } SyncCacheItem;
 
 typedef struct SyncCache {
@@ -63,6 +63,7 @@ struct SyncList {
     SyncList() : data(nil), lock(fork_unsafe_lock) { }
 };
 
+// 减少@synchronize不同对象之间产生竞态条件
 // Use multiple parallel lists to decrease contention among unrelated objects.
 #define LOCK_FOR_OBJ(obj) sDataLists[obj].lock
 #define LIST_FOR_OBJ(obj) sDataLists[obj].data
@@ -78,6 +79,7 @@ static SyncCache *fetch_cache(bool create)
     data = _objc_fetch_pthread_data(create);
     if (!data) return NULL;
 
+    // 线程自有存储区没有存储@synchronize相关的数据
     if (!data->syncCache) {
         if (!create) {
             return NULL;
@@ -163,6 +165,7 @@ static SyncData* id2data(id object, enum usage why)
         unsigned int i;
         for (i = 0; i < cache->used; i++) {
             SyncCacheItem *item = &cache->list[i];
+            // 判断item的object是否与本次@synchronized的object相等
             if (item->data->object != object) continue;
 
             // Found a match.
@@ -212,7 +215,7 @@ static SyncData* id2data(id object, enum usage why)
                 OSAtomicIncrement32Barrier(&result->threadCount);
                 goto done;
             }
-            // 重用
+            // 重用,这里并没有在找到之后直接break，而是继续遍历，因为有可能后面的元素存在p->object和object匹配的情况
             if ( (firstUnused == NULL) && (p->threadCount == 0) )
                 firstUnused = p;
         }
@@ -230,6 +233,7 @@ static SyncData* id2data(id object, enum usage why)
         }
     }
 
+    // 既没有找到可重用的也没有找到匹配object的
     // malloc a new SyncData and add to list.
     // XXX calling malloc with a global lock held is bad practice,
     // might be worth releasing the lock, mallocing, and searching again.
@@ -239,7 +243,7 @@ static SyncData* id2data(id object, enum usage why)
     result->threadCount = 1;
     new (&result->mutex) recursive_mutex_t(fork_unsafe_lock);
     result->nextData = *listp;
-    *listp = result;
+    *listp = result;    // 将新创建的SyncData放到列表头
     
  done:
     lockp->unlock();
