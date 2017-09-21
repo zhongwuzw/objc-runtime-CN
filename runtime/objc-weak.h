@@ -85,7 +85,7 @@ struct weak_entry_t {
             uintptr_t        out_of_line_ness : 2;
             uintptr_t        num_refs : PTR_MINUS_2;
             uintptr_t        mask;
-            uintptr_t        max_hash_displacement;
+            uintptr_t        max_hash_displacement; // 设置最大的位移数，既查找某个对象的entry时最多查询次数，当达到最大次数仍未找到，则返回nil，见weak_entry_for_referent方法
         };
         struct {
             // out_of_line_ness field is low bits of inline_referrers[1]

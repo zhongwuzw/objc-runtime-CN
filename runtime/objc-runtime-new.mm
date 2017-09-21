@@ -6302,9 +6302,9 @@ void *objc_destructInstance(id obj)
         bool assoc = obj->hasAssociatedObjects();
 
         // This order is important.
-        if (cxx) object_cxxDestruct(obj);
+        if (cxx) object_cxxDestruct(obj);   // 调用C++析构器
         if (assoc) _object_remove_assocations(obj); // 移除对象相关的关联引用
-        obj->clearDeallocating();
+        obj->clearDeallocating();   // 进行ARC相关操作，如weak赋nil，清理计数位
     }
 
     return obj;
@@ -6321,7 +6321,8 @@ object_dispose(id obj)
 {
     if (!obj) return nil;
 
-    objc_destructInstance(obj);    
+    objc_destructInstance(obj);
+    // 做完各种析构操作后释放obj的内存
     free(obj);
 
     return nil;

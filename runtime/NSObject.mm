@@ -1594,6 +1594,7 @@ objc_object::sidetable_release(bool performDealloc)
         it->second -= SIDE_TABLE_RC_ONE;
     }
     table.unlock();
+    // 进行释放操作，调用dealloc
     if (do_dealloc  &&  performDealloc) {
         ((void(*)(objc_object *, SEL))objc_msgSend)(this, SEL_dealloc);
     }

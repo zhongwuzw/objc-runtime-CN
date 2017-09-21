@@ -419,6 +419,7 @@ objc_object::clearDeallocating()
 inline void
 objc_object::rootDealloc()
 {
+    // TaggedPointer并不需要进行释放操作
     if (isTaggedPointer()) return;  // fixme necessary?
 
     if (fastpath(isa.nonpointer  &&  

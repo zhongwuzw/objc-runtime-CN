@@ -313,11 +313,13 @@ weak_entry_for_referent(weak_table_t *weak_table, objc_object *referent)
     weak_entry_t *weak_entries = weak_table->weak_entries;
 
     if (!weak_entries) return nil;
-
+    
+    // 将引用的对象地址进行hash找到起始查找的位置
     size_t begin = hash_pointer(referent) & weak_table->mask;
     size_t index = begin;
     size_t hash_displacement = 0;
     while (weak_table->weak_entries[index].referent != referent) {
+        // 移到下一个查找位置
         index = (index+1) & weak_table->mask;
         if (index == begin) bad_weak_table(weak_table->weak_entries);
         hash_displacement++;
@@ -384,8 +386,8 @@ weak_unregister_no_lock(weak_table_t *weak_table, id referent_id,
  * object entry if it does not exist.
  * 
  * @param weak_table The global weak table.
- * @param referent The object pointed to by the weak reference.
- * @param referrer The weak pointer address.
+ * @param referent The object pointed to by the weak reference. weak引用指向的对象
+ * @param referrer The weak pointer address. weak指针的地址
  */
 id 
 weak_register_no_lock(weak_table_t *weak_table, id referent_id, 
@@ -394,8 +396,10 @@ weak_register_no_lock(weak_table_t *weak_table, id referent_id,
     objc_object *referent = (objc_object *)referent_id;
     objc_object **referrer = (objc_object **)referrer_id;
 
+    // Tagged指针并不需要进行内存管理
     if (!referent  ||  referent->isTaggedPointer()) return referent_id;
 
+    // 确保对象不处于释放过程中
     // ensure that the referenced object is viable
     bool deallocating;
     if (!referent->ISA()->hasCustomRR()) {
