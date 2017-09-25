@@ -306,7 +306,7 @@ OBJC_EXPORT id objc_retainBlock(id)
 // Extract class pointer from an isa field.
     
 #if  TARGET_OS_SIMULATOR
-    // No simulators use nonpointer isa yet.
+    // No simulators use nonpointer isa yet.    模拟器都是用sidetable来管理引用计数
     
 #elif __LP64__
 #   define OBJC_HAVE_NONPOINTER_ISA 1

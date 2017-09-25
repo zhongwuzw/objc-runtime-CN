@@ -120,6 +120,9 @@ void vsyslog(int, const char *, va_list) UNAVAILABLE_ATTRIBUTE;
 #define slowpath(x) (__builtin_expect(bool(x), 0))
 
 
+// carryin: 向低位进位
+// carryout: 向高位进位
+
 static ALWAYS_INLINE uintptr_t 
 addc(uintptr_t lhs, uintptr_t rhs, uintptr_t carryin, uintptr_t *carryout)
 {

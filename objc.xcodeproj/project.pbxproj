@@ -175,6 +175,16 @@
 		0E16C96D1F0BCE0400716784 /* ForFoundationOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E16C8D31F0BCE0300716784 /* ForFoundationOnly.h */; };
 		0E16C96E1F0BCE0400716784 /* plconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = 0E16C8D41F0BCE0300716784 /* plconvert.c */; };
 		0E16C96F1F0BCE0400716784 /* TargetConditionals.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E16C8D51F0BCE0300716784 /* TargetConditionals.h */; };
+		0ED599BB1F78106300919904 /* objc-object.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BA1F78106200919904 /* objc-object.h */; };
+		0ED599C51F78108900919904 /* objc-locks-old.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BC1F78108700919904 /* objc-locks-old.h */; };
+		0ED599C61F78108900919904 /* objc-cache-old.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BD1F78108700919904 /* objc-cache-old.h */; };
+		0ED599C71F78108900919904 /* objc-locks.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BE1F78108700919904 /* objc-locks.h */; };
+		0ED599C81F78108900919904 /* objcrt.c in Sources */ = {isa = PBXBuildFile; fileRef = 0ED599BF1F78108800919904 /* objcrt.c */; };
+		0ED599C91F78108900919904 /* objcrt.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599C01F78108800919904 /* objcrt.h */; };
+		0ED599CA1F78108900919904 /* objc-lockdebug.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599C11F78108800919904 /* objc-lockdebug.h */; };
+		0ED599CB1F78108900919904 /* objc-locks-new.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599C21F78108800919904 /* objc-locks-new.h */; };
+		0ED599CC1F78108900919904 /* objc-env.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599C31F78108900919904 /* objc-env.h */; };
+		0ED599CD1F78108900919904 /* objc-cache.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599C41F78108900919904 /* objc-cache.h */; };
 		393CEAC00DC69E3E000B69DE /* objc-references.mm in Sources */ = {isa = PBXBuildFile; fileRef = 393CEABF0DC69E3E000B69DE /* objc-references.mm */; };
 		393CEAC60DC69E67000B69DE /* objc-references.h in Headers */ = {isa = PBXBuildFile; fileRef = 393CEAC50DC69E67000B69DE /* objc-references.h */; };
 		39ABD72312F0B61800D1054C /* objc-weak.h in Headers */ = {isa = PBXBuildFile; fileRef = 39ABD71F12F0B61800D1054C /* objc-weak.h */; };
@@ -428,6 +438,16 @@
 		0E16C8D31F0BCE0300716784 /* ForFoundationOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForFoundationOnly.h; path = CF/ForFoundationOnly.h; sourceTree = "<group>"; };
 		0E16C8D41F0BCE0300716784 /* plconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plconvert.c; path = CF/plconvert.c; sourceTree = "<group>"; };
 		0E16C8D51F0BCE0300716784 /* TargetConditionals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetConditionals.h; path = CF/TargetConditionals.h; sourceTree = "<group>"; };
+		0ED599BA1F78106200919904 /* objc-object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-object.h"; path = "runtime/objc-object.h"; sourceTree = "<group>"; };
+		0ED599BC1F78108700919904 /* objc-locks-old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-locks-old.h"; path = "runtime/objc-locks-old.h"; sourceTree = "<group>"; };
+		0ED599BD1F78108700919904 /* objc-cache-old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-cache-old.h"; path = "runtime/objc-cache-old.h"; sourceTree = "<group>"; };
+		0ED599BE1F78108700919904 /* objc-locks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-locks.h"; path = "runtime/objc-locks.h"; sourceTree = "<group>"; };
+		0ED599BF1F78108800919904 /* objcrt.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = objcrt.c; path = runtime/objcrt.c; sourceTree = "<group>"; };
+		0ED599C01F78108800919904 /* objcrt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = objcrt.h; path = runtime/objcrt.h; sourceTree = "<group>"; };
+		0ED599C11F78108800919904 /* objc-lockdebug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-lockdebug.h"; path = "runtime/objc-lockdebug.h"; sourceTree = "<group>"; };
+		0ED599C21F78108800919904 /* objc-locks-new.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-locks-new.h"; path = "runtime/objc-locks-new.h"; sourceTree = "<group>"; };
+		0ED599C31F78108900919904 /* objc-env.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-env.h"; path = "runtime/objc-env.h"; sourceTree = "<group>"; };
+		0ED599C41F78108900919904 /* objc-cache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-cache.h"; path = "runtime/objc-cache.h"; sourceTree = "<group>"; };
 		393CEABF0DC69E3E000B69DE /* objc-references.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = "objc-references.mm"; path = "runtime/objc-references.mm"; sourceTree = "<group>"; };
 		393CEAC50DC69E67000B69DE /* objc-references.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-references.h"; path = "runtime/objc-references.h"; sourceTree = "<group>"; };
 		39ABD71F12F0B61800D1054C /* objc-weak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-weak.h"; path = "runtime/objc-weak.h"; sourceTree = "<group>"; };
@@ -847,6 +867,16 @@
 		8384862A0D6D6ABC00CEA253 /* Project Headers */ = {
 			isa = PBXGroup;
 			children = (
+				0ED599BD1F78108700919904 /* objc-cache-old.h */,
+				0ED599C41F78108900919904 /* objc-cache.h */,
+				0ED599C31F78108900919904 /* objc-env.h */,
+				0ED599C11F78108800919904 /* objc-lockdebug.h */,
+				0ED599C21F78108800919904 /* objc-locks-new.h */,
+				0ED599BC1F78108700919904 /* objc-locks-old.h */,
+				0ED599BE1F78108700919904 /* objc-locks.h */,
+				0ED599BF1F78108800919904 /* objcrt.c */,
+				0ED599C01F78108800919904 /* objcrt.h */,
+				0ED599BA1F78106200919904 /* objc-object.h */,
 				838485CF0D6D68A200CEA253 /* objc-config.h */,
 				83BE02E60FCCB24D00661494 /* objc-file.h */,
 				83BE02E50FCCB24D00661494 /* objc-file-old.h */,
@@ -887,6 +917,7 @@
 				834EC0A411614167009B2563 /* objc-abi.h in Headers */,
 				838485EF0D6D68A200CEA253 /* objc-api.h in Headers */,
 				0E16C96D1F0BCE0400716784 /* ForFoundationOnly.h in Headers */,
+				0ED599C51F78108900919904 /* objc-locks-old.h in Headers */,
 				838485F00D6D68A200CEA253 /* objc-auto.h in Headers */,
 				0E16C9231F0BCE0300716784 /* CFPlugIn.h in Headers */,
 				0E16C9071F0BCE0300716784 /* CFError.h in Headers */,
@@ -909,6 +940,7 @@
 				83BE02E80FCCB24D00661494 /* objc-file-old.h in Headers */,
 				0E16C90E1F0BCE0300716784 /* CFLocale.h in Headers */,
 				0E16C9161F0BCE0300716784 /* CFMessagePort.h in Headers */,
+				0ED599CC1F78108900919904 /* objc-env.h in Headers */,
 				0E16C8DF1F0BCE0300716784 /* CFBasicHash.h in Headers */,
 				83BE02E90FCCB24D00661494 /* objc-file.h in Headers */,
 				0E16C8ED1F0BCE0300716784 /* CFBundle_Internal.h in Headers */,
@@ -926,18 +958,23 @@
 				83112ED40F00599600A5FBAF /* objc-internal.h in Headers */,
 				0E16C9511F0BCE0400716784 /* CFUnicodeDecomposition.h in Headers */,
 				838485FE0D6D68A200CEA253 /* objc-load.h in Headers */,
+				0ED599C71F78108900919904 /* objc-locks.h in Headers */,
+				0ED599CD1F78108900919904 /* objc-cache.h in Headers */,
 				0E16C9391F0BCE0300716784 /* CFStreamInternal.h in Headers */,
 				0E16C8E21F0BCE0300716784 /* CFBigNumber.h in Headers */,
 				838486000D6D68A200CEA253 /* objc-loadmethod.h in Headers */,
 				0E16C95F1F0BCE0400716784 /* CFUUID.h in Headers */,
+				0ED599CB1F78108900919904 /* objc-locks-new.h in Headers */,
 				831C85D50E10CF850066E64C /* objc-os.h in Headers */,
 				0E16C9531F0BCE0400716784 /* CFUnicodePrecomposition.h in Headers */,
 				838486030D6D68A200CEA253 /* objc-private.h in Headers */,
 				0E16C9651F0BCE0400716784 /* CFXMLNode.h in Headers */,
 				393CEAC60DC69E67000B69DE /* objc-references.h in Headers */,
+				0ED599C61F78108900919904 /* objc-cache-old.h in Headers */,
 				0E16C91F1F0BCE0300716784 /* CFPlugIn_Factory.h in Headers */,
 				0E16C9401F0BCE0300716784 /* CFStringEncodingConverterExt.h in Headers */,
 				838486070D6D68A200CEA253 /* objc-runtime-new.h in Headers */,
+				0ED599CA1F78108900919904 /* objc-lockdebug.h in Headers */,
 				83BE02EA0FCCB24D00661494 /* objc-runtime-old.h in Headers */,
 				0E16C93D1F0BCE0300716784 /* CFStringDefaultEncoding.h in Headers */,
 				0E16C9001F0BCE0300716784 /* CFDate.h in Headers */,
@@ -963,7 +1000,9 @@
 				0E16C9181F0BCE0300716784 /* CFNumber.h in Headers */,
 				838486200D6D68A800CEA253 /* runtime.h in Headers */,
 				0E16C96F1F0BCE0400716784 /* TargetConditionals.h in Headers */,
+				0ED599BB1F78106300919904 /* objc-object.h in Headers */,
 				0E16C92D1F0BCE0300716784 /* CFRuntime.h in Headers */,
+				0ED599C91F78108900919904 /* objcrt.h in Headers */,
 				0E16C8EA1F0BCE0300716784 /* CFBundle_BinaryTypes.h in Headers */,
 				39ABD72312F0B61800D1054C /* objc-weak.h in Headers */,
 				0E16C90B1F0BCE0300716784 /* CFICULogging.h in Headers */,
@@ -1116,6 +1155,7 @@
 				0E16C9031F0BCE0300716784 /* CFDictionary.c in Sources */,
 				0E16C9251F0BCE0300716784 /* CFPreferences.c in Sources */,
 				8384860B0D6D68A200CEA253 /* objc-runtime.mm in Sources */,
+				0ED599C81F78108900919904 /* objcrt.c in Sources */,
 				0E16C9471F0BCE0300716784 /* CFStringUtilities.c in Sources */,
 				8384860D0D6D68A200CEA253 /* objc-sel-set.mm in Sources */,
 				0E16C95C1F0BCE0400716784 /* CFUtilities.c in Sources */,
