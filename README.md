@@ -62,6 +62,12 @@ Source code from [objc runtime](https://opensource.apple.com/tarballs/objc4/), I
         }
     }
 ```
+20170926更新：
+向`Apple`提交`bug`后，期间沟通了几次（一开始`Apple`说没问题，`Sigh`），最新收到邮件，已经在`macOS 10.13 GM`中修复了，不过没说怎么修复的，只能等待新的运行时版本，看怎么解决的。
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/zhongwuzw/ObjC-Runtime/master/images/IMPBug.png"/>
+</p>
 
 ## License
 -----

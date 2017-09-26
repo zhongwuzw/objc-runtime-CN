@@ -1586,7 +1586,7 @@ objc_object::sidetable_release(bool performDealloc)
     if (it == table.refcnts.end()) {
         do_dealloc = true;
         table.refcnts[this] = SIDE_TABLE_DEALLOCATING;
-    } else if (it->second < SIDE_TABLE_DEALLOCATING) {
+    } else if (it->second < SIDE_TABLE_DEALLOCATING) { // it->second保存的是引用计数减1
         // SIDE_TABLE_WEAKLY_REFERENCED may be set. Don't change it.
         do_dealloc = true;
         it->second |= SIDE_TABLE_DEALLOCATING;
