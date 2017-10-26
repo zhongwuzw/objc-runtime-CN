@@ -301,7 +301,7 @@ LExit$0:
  * 1：获取传递进来的类对象
  * 2：获取类用来缓存方法的cache
  * 3：使用selector在cache中查找
- * 4：如果cache中查找不到，则跳转到C代码，进行slow search
+ * 4：如果cache中查找不到，则跳转到C代码(_class_lookupMethodAndLoadCache3)，进行slow search
  * 5：调用方法的IMP
  *
  ********************************************************************/
@@ -464,7 +464,7 @@ LLookup_Nil:
 
 	// receiver and selector already in x0 and x1
 	mov	x2, x16
-	bl	__class_lookupMethodAndLoadCache3   //调用C的_class_lookupMethodAndLoadCache3函数
+	bl	__class_lookupMethodAndLoadCache3   //调用C的_class_lookupMethodAndLoadCache3函数，进行IMP的查找
 
 	// imp in x0
 	mov	x17, x0

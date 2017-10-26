@@ -69,6 +69,50 @@ Source code from [objc runtime](https://opensource.apple.com/tarballs/objc4/), I
   <img src="https://raw.githubusercontent.com/zhongwuzw/ObjC-Runtime/master/images/IMPBug.png"/>
 </p>
 
+20171026更新：
+看了一下新发布的[objc4-723](https://opensource.apple.com/source/objc4/objc4-723/runtime/objc-runtime-new.mm.auto.html)，已经做了修复，初始值变为了`superclass`:
+
+```
+    // Try superclass caches and method lists.
+    {
+        unsigned attempts = unreasonableClassCount();
+        // 从superclass开始进行遍历
+        for (Class curClass = cls->superclass;
+             curClass != nil;
+             curClass = curClass->superclass)
+        {
+            // Halt if there is a cycle in the superclass chain.
+            if (--attempts == 0) {
+                _objc_fatal("Memory corruption in class list.");
+            }
+            
+            // Superclass cache.
+            imp = cache_getImp(curClass, sel);
+            if (imp) {
+                if (imp != (IMP)_objc_msgForward_impcache) {
+                    // Found the method in a superclass. Cache it in this class.
+                    log_and_fill_cache(cls, imp, sel, inst, curClass);
+                    goto done;
+                }
+                else {
+                    // Found a forward:: entry in a superclass.
+                    // Stop searching, but don't cache yet; call method 
+                    // resolver for this class first.
+                    break;
+                }
+            }
+            
+            // Superclass method list.
+            Method meth = getMethodNoSuper_nolock(curClass, sel);
+            if (meth) {
+                log_and_fill_cache(cls, meth->imp, sel, inst, curClass);
+                imp = meth->imp;
+                goto done;
+            }
+        }
+    }
+```
+
 ## License
 -----
 
