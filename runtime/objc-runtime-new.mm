@@ -60,10 +60,6 @@ static void fixupMessageRef(message_ref_t *msg);
 static bool MetaclassNSObjectAWZSwizzled;
 static bool ClassNSObjectRRSwizzled;
 
-id objc_noop_imp(id self, SEL _cmd __unused) {
-    return self;
-}
-
 
 /***********************************************************************
 * Lock management
@@ -94,6 +90,13 @@ void lock_init(void)
 # endif
 #endif
 }
+
+
+/***********************************************************************
+* Class structure decoding
+**********************************************************************/
+
+const uintptr_t objc_debug_class_rw_data_mask = FAST_DATA_MASK;
 
 
 /***********************************************************************
@@ -4664,8 +4667,8 @@ IMP lookUpImpOrForward(Class cls, SEL sel, id inst,
     // Try superclass caches and method lists.  从父类的缓存和方法列表中查找
     {
         unsigned attempts = unreasonableClassCount();
-        // curClass是从cls开始的，应该从cls->superclass开始，这应该是个bug
-        for (Class curClass = cls;
+        // curClass是从cls开始的，应该从cls->superclass开始，这应该是个bug ,已在objc4-723版本中修复
+        for (Class curClass = cls->superclass;
              curClass != nil;
              curClass = curClass->superclass)
         {

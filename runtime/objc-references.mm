@@ -236,12 +236,14 @@ id _object_get_associative_reference(id object, void *key) {
                 ObjcAssociation &entry = j->second;
                 value = entry.value();
                 policy = entry.policy();
-                if (policy & OBJC_ASSOCIATION_GETTER_RETAIN) ((id(*)(id, SEL))objc_msgSend)(value, SEL_retain);
+                if (policy & OBJC_ASSOCIATION_GETTER_RETAIN) {
+                    objc_retain(value);
+                }
             }
         }
     }
     if (value && (policy & OBJC_ASSOCIATION_GETTER_AUTORELEASE)) {
-        ((id(*)(id, SEL))objc_msgSend)(value, SEL_autorelease);
+        objc_autorelease(value);
     }
     return value;
 }
@@ -249,7 +251,7 @@ id _object_get_associative_reference(id object, void *key) {
 static id acquireValue(id value, uintptr_t policy) {
     switch (policy & 0xFF) {
     case OBJC_ASSOCIATION_SETTER_RETAIN:
-        return ((id(*)(id, SEL))objc_msgSend)(value, SEL_retain);
+        return objc_retain(value);
     case OBJC_ASSOCIATION_SETTER_COPY:
         return ((id(*)(id, SEL))objc_msgSend)(value, SEL_copy);
     }
@@ -258,7 +260,7 @@ static id acquireValue(id value, uintptr_t policy) {
 
 static void releaseValue(id value, uintptr_t policy) {
     if (policy & OBJC_ASSOCIATION_SETTER_RETAIN) {
-        ((id(*)(id, SEL))objc_msgSend)(value, SEL_release);
+        return objc_release(value);
     }
 }
 
