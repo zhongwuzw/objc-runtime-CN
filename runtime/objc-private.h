@@ -49,7 +49,7 @@ struct objc_class;
 struct objc_object;
 
 typedef struct objc_class *Class;
-typedef struct objc_object *id;
+typedef struct objc_object *id; // id 声明为指向Objc对象的指针
 
 namespace {
     struct SideTable;

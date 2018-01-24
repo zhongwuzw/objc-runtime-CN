@@ -48,6 +48,7 @@ void sel_init(size_t selrefCount)
     SelrefCount = selrefCount;
 
 #if SUPPORT_PREOPT
+    // 预优化的selector，selectors存放在__TEXT, __objc_opt_ro
     builtins = preoptimizedSelectors();
 
     if (PrintPreopt  &&  builtins) {
@@ -97,6 +98,7 @@ void sel_init(size_t selrefCount)
 }
 
 
+// 创建SEL，从这里，我们可以看到，sel其实就是一个char *字符串
 static SEL sel_alloc(const char *name, bool copy)
 {
     selLock.assertWriting();
@@ -115,6 +117,7 @@ BOOL sel_isMapped(SEL sel)
 {
     if (!sel) return NO;
 
+    // SEL其实内部就是一个C字符串, 参见sel_alloc方法
     const char *name = (const char *)(void *)sel;
 
     if (sel == search_builtins(name)) return YES;
@@ -135,7 +138,7 @@ static SEL search_builtins(const char *name)
     return nil;
 }
 
-
+// 注册sel, 如果方法名相同，则sel也相同
 static SEL __sel_registerName(const char *name, int lock, int copy) 
 {
     SEL result = 0;
@@ -144,11 +147,13 @@ static SEL __sel_registerName(const char *name, int lock, int copy)
     else selLock.assertWriting();
 
     if (!name) return (SEL)0;
-
+    
+    // 从预存的sels中查找
     result = search_builtins(name);
     if (result) return result;
     
     if (lock) selLock.read();
+    // 从table 中查找
     if (namedSelectors) {
         result = (SEL)NXMapGet(namedSelectors, name);
     }
@@ -168,6 +173,7 @@ static SEL __sel_registerName(const char *name, int lock, int copy)
         result = (SEL)NXMapGet(namedSelectors, name);
     }
     if (!result) {
+        // 创建SEL并加入到map中
         result = sel_alloc(name, copy);
         // fixme choose a better container (hash not map for starters)
         NXMapInsert(namedSelectors, sel_getName(result), result);
@@ -206,6 +212,7 @@ SEL sel_getUid(const char *name) {
 }
 
 
+// 判断两个sel是否相等,直接比较指针即可;(typedef struct objc_selector *SEL)
 BOOL sel_isEqual(SEL lhs, SEL rhs)
 {
     return bool(lhs == rhs);

@@ -47,7 +47,7 @@ typedef struct objc_object *id;
 #endif
 
 /// An opaque type that represents a method selector.
-typedef struct objc_selector *SEL;
+typedef struct objc_selector *SEL;  // SEL是不透明指针
 
 /// A pointer to the function of a method implementation. 
 #if !OBJC_OLD_DISPATCH_PROTOTYPES

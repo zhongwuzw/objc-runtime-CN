@@ -6306,7 +6306,7 @@ void *objc_destructInstance(id obj)
         bool assoc = obj->hasAssociatedObjects();
 
         // This order is important.
-        if (cxx) object_cxxDestruct(obj);   // 调用C++析构器
+        if (cxx) object_cxxDestruct(obj);   // 本来是对C++类型的对象属性调用析构器，现在ARC借用了这个方法来进行整个内存的释放，具体实现可参考：http://clang.llvm.org/doxygen/CGObjC_8cpp_source.html 的emitCXXDestructMethod(CodeGenFunction &CGF,ObjCImplementationDecl *impl)方法
         if (assoc) _object_remove_assocations(obj); // 移除对象相关的关联引用
         obj->clearDeallocating();   // 进行ARC相关操作，如weak赋nil，清理计数位
     }
