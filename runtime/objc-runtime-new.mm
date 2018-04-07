@@ -2702,6 +2702,7 @@ static void schedule_class_load(Class cls)
     if (!cls) return;
     assert(cls->isRealized());  // _read_images should realize
 
+    // 确保cls只被加入到loadable_class数组一次
     if (cls->data()->flags & RW_LOADED) return;
 
     // Ensure superclass-first ordering 递归，父类优先
@@ -2725,13 +2726,15 @@ void prepare_load_methods(const headerType *mhdr)
     size_t count, i;
 
     runtimeLock.assertWriting();
-
+    
+    // 从数据段中获取类的列表并递归从根父类开始依次添加到loadable_classes数组中
     classref_t *classlist = 
         _getObjc2NonlazyClassList(mhdr, &count);
     for (i = 0; i < count; i++) {
         schedule_class_load(remapClass(classlist[i]));
     }
 
+    // 从数据段中获取类别的列表并将其添加到loadable_categories数组中
     category_t **categorylist = _getObjc2NonlazyCategoryList(mhdr, &count);
     for (i = 0; i < count; i++) {
         category_t *cat = categorylist[i];
