@@ -1687,7 +1687,8 @@ static void reconcileInstanceVariables(Class cls, Class supercls, const class_ro
         return;
     }
     // fixme can optimize for "class has no new ivars", etc
-
+    
+    // 修复fragile ivars 问题
     if (ro->instanceStart < super_ro->instanceSize) {
         // Superclass has changed size. This class's ivars must move.
         // Also slide layout bits in parallel.
@@ -2326,6 +2327,9 @@ void _read_images(header_info **hList, uint32_t hCount, int totalClasses, int un
 
     if (!doneOnce) {
         doneOnce = YES;
+        
+        // Tagged pointer: NSString、NSNumber等会用到，在指针中直接存储内容
+        // Non pointer: 在64位系统中，由于iOS并不会使用全部的64位虚地址空间，所以可以利用其中剩余的一些位来存储对象的一些数据，比如引用计数，是否有弱引用等,可参考：http://www.sealiesoftware.com/blog/archive/2013/09/24/objc_explain_Non-pointer_isa.html
 
 #if SUPPORT_NONPOINTER_ISA
         // Disable non-pointer isa under some conditions.

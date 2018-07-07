@@ -57,7 +57,7 @@ T* getDataSection(const headerType *mhdr, const char *sectname,
 // 在Image的数据段中，存储着SEL、Class、Protocol、Category等列表
 //      function name                 content type     section name
 GETSECT(_getObjc2SelectorRefs,        SEL,             "__objc_selrefs"); 
-GETSECT(_getObjc2MessageRefs,         message_ref_t,   "__objc_msgrefs"); 
+GETSECT(_getObjc2MessageRefs,         message_ref_t,   "__objc_msgrefs"); // 消息列表，包含SEL和IMP
 GETSECT(_getObjc2ClassRefs,           Class,           "__objc_classrefs");
 GETSECT(_getObjc2SuperRefs,           Class,           "__objc_superrefs");
 GETSECT(_getObjc2ClassList,           classref_t,      "__objc_classlist");
