@@ -365,7 +365,7 @@ DISPATCH_EXPORT DISPATCH_NOTHROW void dispatch_atfork_child(void);
 				"__builtin_expect doesn't support types wider than long"); \
 				(long)(x); })
 #define fastpath(x) ((__typeof__(x))__builtin_expect(_safe_cast_to_long(x), ~0l))
-#define slowpath(x) ((__typeof__(x))__builtin_expect(_safe_cast_to_long(x), 0l))
+#define slowpath(x) ((__typeof__(x))__builtin_expect(_safe_cast_to_long(x), 0l))	// `x`为0的概率较大,`__builtin_expect`用于条件指令优化
 #define likely(x) __builtin_expect(!!(x), 1)
 #define unlikely(x) __builtin_expect(!!(x), 0)
 #else

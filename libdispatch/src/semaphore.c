@@ -187,11 +187,14 @@ _dispatch_group_create_and_enter(void)
 void
 dispatch_group_enter(dispatch_group_t dg)
 {
+	// `dg_value`原子加一操作
 	long value = os_atomic_inc_orig2o(dg, dg_value, acquire);
 	if (slowpath((unsigned long)value >= (unsigned long)LONG_MAX)) {
 		DISPATCH_CLIENT_CRASH(value,
 				"Too many nested calls to dispatch_group_enter()");
 	}
+	// 第一次调用`dispatch_group_enter`时`retain` `dg`
+	// `value`的值为原子加一操作之前的值，所以第一次访问之前为0
 	if (value == 0) {
 		_dispatch_retain(dg); // <rdar://problem/22318411>
 	}
@@ -213,13 +216,14 @@ _dispatch_group_wake(dispatch_group_t dg, bool needs_release)
 	}
 	rval = (long)os_atomic_xchg2o(dg, dg_waiters, 0, relaxed);
 	if (rval) {
-		// wake group waiters
+		// wake group waiters	通知waiters
 		_dispatch_sema4_create(&dg->dg_sema, _DSEMA4_POLICY_FIFO);
 		_dispatch_sema4_signal(&dg->dg_sema, rval);
 	}
 	uint16_t refs = needs_release ? 1 : 0; // <rdar://problem/22318411>
 	if (head) {
 		// async group notify blocks
+		// 调用notify block
 		do {
 			next = os_mpsc_pop_snapshot_head(head, tail, do_next);
 			dispatch_queue_t dsn_queue = (dispatch_queue_t)head->dc_data;
@@ -235,10 +239,30 @@ _dispatch_group_wake(dispatch_group_t dg, bool needs_release)
 void
 dispatch_group_leave(dispatch_group_t dg)
 {
+	// `dg_value`原子减一
 	long value = os_atomic_dec2o(dg, dg_value, release);
+	// 这里存疑的地方是`value`的值应该是原子操作之前的值，也就是说，如果`dispatch_group_leave`是最后一次的调用，那么`value`的值应该为1?
+	// 如下汇编为模拟器中实际运行的代码，看汇编代码逻辑是没有问题的：
+	// libdispatch.dylib`dispatch_group_leave:
+	// 0x11136f5c1 <+0>:  mov    rcx, -0x1
+	// 0x11136f5c8 <+7>:  lock
+	// 0x11136f5c9 <+8>:  xadd   qword ptr [rdi + 0x30], rcx // 进行交换加的操作,[rdi + 0x30]为`dg_value`，执行完改行指令后，$rcx的值为`dg_value`原值，为`dg_value`为减一后的值，之所以这里是进行加-1的操作，是因为计算机里是没有减命令的，所有减计算都会转化为加
+	// 0x11136f5ce <+13>: mov    rax, rcx
+	// 0x11136f5d1 <+16>: dec    rax	// $rax减一操作, 上一行指令将$rcx赋给了$rax，既将`dg_value`的原值减一操作，当$rax减一后的值为0时，zf标志位位1
+	// 0x11136f5d4 <+19>: je     0x11136f5dc               ; <+27>	// 当$rax为0时，既zf标志位为1时跳转到`_dispatch_group_wake`
+	// 0x11136f5d6 <+21>: test   rcx, rcx
+	// 0x11136f5d9 <+24>: jle    0x11136f5e6               ; <+37>
+	// 0x11136f5db <+26>: ret
+	// 0x11136f5dc <+27>: mov    esi, 0x1
+	// 0x11136f5e1 <+32>: jmp    0x11136f5fd               ; _dispatch_group_wake
+	// 0x11136f5e6 <+37>: lea    rcx, [rip + 0x2c452]      ; "BUG IN CLIENT OF LIBDISPATCH: Unbalanced call to dispatch_group_leave()"
+	// 0x11136f5ed <+44>: mov    qword ptr [rip + 0x57664], rcx ; gCRAnnotations + 8
+	// 0x11136f5f4 <+51>: mov    qword ptr [rip + 0x5768d], rax ; gCRAnnotations + 56
+	// 0x11136f5fb <+58>: ud2
 	if (slowpath(value == 0)) {
 		return (void)_dispatch_group_wake(dg, true);
 	}
+	// 一定要平衡`dispatch_group_leave`，否则当`dispatch_group_leave`多于enter时，将crash
 	if (slowpath(value < 0)) {
 		DISPATCH_CLIENT_CRASH(value,
 				"Unbalanced call to dispatch_group_leave()");
@@ -325,6 +349,7 @@ _dispatch_group_wait_slow(dispatch_group_t dg, dispatch_time_t timeout)
 	return 0;
 }
 
+// 其实就是用信号量来实现的waiter
 long
 dispatch_group_wait(dispatch_group_t dg, dispatch_time_t timeout)
 {
