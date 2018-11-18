@@ -645,6 +645,7 @@ attachCategories(Class cls, category_list *cats, bool flush_caches)
 
         method_list_t *mlist = entry.cat->methodsForMeta(isMeta);
         if (mlist) {
+			// 往前插入方法
             mlists[mcount++] = mlist;
             fromBundle |= entry.hi->isBundle();
         }
@@ -4417,11 +4418,12 @@ static method_t *findMethodInSortedMethodList(SEL key, const method_list_t *list
         probe = base + (count >> 1);
         
         uintptr_t probeValue = (uintptr_t)probe->name;
-        
+        // 根据SEL的指针地址来比较
         if (keyValue == probeValue) {
             // `probe` is a match.
             // Rewind looking for the *first* occurrence of this value.
             // This is required for correct category overrides.
+			// category重载方法的话，会把方法放到method lists的前面，所以我们需要找到第一个probeValue
             while (probe > first && keyValue == (uintptr_t)probe[-1].name) {
                 probe--;
             }

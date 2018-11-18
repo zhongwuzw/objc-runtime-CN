@@ -1,7 +1,7 @@
 // -*- truncate-lines: t; -*-
 
 // OPTION(var, env, help)
-
+// 可以通过在Xcode中设置如下的一些环境变量来打印相关信息
 OPTION( PrintImages,              OBJC_PRINT_IMAGES,               "log image and library names as they are loaded")
 OPTION( PrintImageTimes,          OBJC_PRINT_IMAGE_TIMES,          "measure duration of image loading steps")
 OPTION( PrintLoading,             OBJC_PRINT_LOAD_METHODS,         "log calls to class and category +load methods")
