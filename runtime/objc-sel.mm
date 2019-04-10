@@ -68,7 +68,7 @@ void sel_init(size_t selrefCount)
 #define s(x) SEL_##x = sel_registerNameNoLock(#x, NO)
 #define t(x,y) SEL_##y = sel_registerNameNoLock(#x, NO)
 
-    sel_lock();
+    mutex_locker_t lock(selLock);
 
     s(load);
     s(initialize);
@@ -91,8 +91,6 @@ void sel_init(size_t selrefCount)
     s(retainWeakReference);
     s(allowsWeakReference);
 
-    sel_unlock();
-
 #undef s
 #undef t
 }
@@ -101,7 +99,7 @@ void sel_init(size_t selrefCount)
 // 创建SEL，从这里，我们可以看到，sel其实就是一个char *字符串
 static SEL sel_alloc(const char *name, bool copy)
 {
-    selLock.assertWriting();
+    selLock.assertLocked();
     return (SEL)(copy ? strdupIfMutable(name) : name);    
 }
 
@@ -122,7 +120,7 @@ BOOL sel_isMapped(SEL sel)
 
     if (sel == search_builtins(name)) return YES;
 
-    rwlock_reader_t lock(selLock);
+    mutex_locker_t lock(selLock);
     if (namedSelectors) {
         return (sel == (SEL)NXMapGet(namedSelectors, name));
     }
@@ -139,38 +137,32 @@ static SEL search_builtins(const char *name)
 }
 
 // 注册sel, 如果方法名相同，则sel也相同
-static SEL __sel_registerName(const char *name, int lock, int copy) 
+
+static SEL __sel_registerName(const char *name, bool shouldLock, bool copy) 
 {
     SEL result = 0;
 
-    if (lock) selLock.assertUnlocked();
-    else selLock.assertWriting();
+    if (shouldLock) selLock.assertUnlocked();
+    else selLock.assertLocked();
 
     if (!name) return (SEL)0;
-    
     // 从预存的sels中查找
+
     result = search_builtins(name);
     if (result) return result;
     
-    if (lock) selLock.read();
     // 从table 中查找
+    conditional_mutex_locker_t lock(selLock, shouldLock);
     if (namedSelectors) {
         result = (SEL)NXMapGet(namedSelectors, name);
     }
-    if (lock) selLock.unlockRead();
     if (result) return result;
 
     // No match. Insert.
 
-    if (lock) selLock.write();
-
     if (!namedSelectors) {
         namedSelectors = NXCreateMapTable(NXStrValueMapPrototype, 
                                           (unsigned)SelrefCount);
-    }
-    if (lock) {
-        // Rescan in case it was added while we dropped the lock
-        result = (SEL)NXMapGet(namedSelectors, name);
     }
     if (!result) {
         // 创建SEL并加入到map中
@@ -179,7 +171,6 @@ static SEL __sel_registerName(const char *name, int lock, int copy)
         NXMapInsert(namedSelectors, sel_getName(result), result);
     }
 
-    if (lock) selLock.unlockWrite();
     return result;
 }
 
@@ -190,16 +181,6 @@ SEL sel_registerName(const char *name) {
 
 SEL sel_registerNameNoLock(const char *name, bool copy) {
     return __sel_registerName(name, 0, copy);  // NO lock, maybe copy
-}
-
-void sel_lock(void)
-{
-    selLock.write();
-}
-
-void sel_unlock(void)
-{
-    selLock.unlockWrite();
 }
 
 
