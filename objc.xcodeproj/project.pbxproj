@@ -186,6 +186,14 @@
 		0E16C96D1F0BCE0400716784 /* ForFoundationOnly.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E16C8D31F0BCE0300716784 /* ForFoundationOnly.h */; };
 		0E16C96E1F0BCE0400716784 /* plconvert.c in Sources */ = {isa = PBXBuildFile; fileRef = 0E16C8D41F0BCE0300716784 /* plconvert.c */; };
 		0E16C96F1F0BCE0400716784 /* TargetConditionals.h in Headers */ = {isa = PBXBuildFile; fileRef = 0E16C8D51F0BCE0300716784 /* TargetConditionals.h */; };
+		0EBF3A5F225DA1810028FCE7 /* llvm-DenseMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A57225DA1800028FCE7 /* llvm-DenseMap.h */; };
+		0EBF3A60225DA1810028FCE7 /* llvm-DenseMapInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A58225DA1800028FCE7 /* llvm-DenseMapInfo.h */; };
+		0EBF3A61225DA1810028FCE7 /* arm64-asm.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A59225DA1800028FCE7 /* arm64-asm.h */; };
+		0EBF3A62225DA1810028FCE7 /* objc-ptrauth.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A5A225DA1800028FCE7 /* objc-ptrauth.h */; };
+		0EBF3A63225DA1810028FCE7 /* isa.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A5B225DA1800028FCE7 /* isa.h */; };
+		0EBF3A64225DA1810028FCE7 /* llvm-MathExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A5C225DA1810028FCE7 /* llvm-MathExtras.h */; };
+		0EBF3A65225DA1810028FCE7 /* llvm-type_traits.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A5D225DA1810028FCE7 /* llvm-type_traits.h */; };
+		0EBF3A66225DA1810028FCE7 /* llvm-AlignOf.h in Headers */ = {isa = PBXBuildFile; fileRef = 0EBF3A5E225DA1810028FCE7 /* llvm-AlignOf.h */; };
 		0ED599BB1F78106300919904 /* objc-object.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BA1F78106200919904 /* objc-object.h */; };
 		0ED599C51F78108900919904 /* objc-locks-old.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BC1F78108700919904 /* objc-locks-old.h */; };
 		0ED599C61F78108900919904 /* objc-cache-old.h in Headers */ = {isa = PBXBuildFile; fileRef = 0ED599BD1F78108700919904 /* objc-cache-old.h */; };
@@ -460,6 +468,14 @@
 		0E16C8D31F0BCE0300716784 /* ForFoundationOnly.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ForFoundationOnly.h; path = CF/ForFoundationOnly.h; sourceTree = "<group>"; };
 		0E16C8D41F0BCE0300716784 /* plconvert.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = plconvert.c; path = CF/plconvert.c; sourceTree = "<group>"; };
 		0E16C8D51F0BCE0300716784 /* TargetConditionals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TargetConditionals.h; path = CF/TargetConditionals.h; sourceTree = "<group>"; };
+		0EBF3A57225DA1800028FCE7 /* llvm-DenseMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "llvm-DenseMap.h"; path = "runtime/llvm-DenseMap.h"; sourceTree = "<group>"; };
+		0EBF3A58225DA1800028FCE7 /* llvm-DenseMapInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "llvm-DenseMapInfo.h"; path = "runtime/llvm-DenseMapInfo.h"; sourceTree = "<group>"; };
+		0EBF3A59225DA1800028FCE7 /* arm64-asm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "arm64-asm.h"; path = "runtime/arm64-asm.h"; sourceTree = "<group>"; };
+		0EBF3A5A225DA1800028FCE7 /* objc-ptrauth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-ptrauth.h"; path = "runtime/objc-ptrauth.h"; sourceTree = "<group>"; };
+		0EBF3A5B225DA1800028FCE7 /* isa.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = isa.h; path = runtime/isa.h; sourceTree = "<group>"; };
+		0EBF3A5C225DA1810028FCE7 /* llvm-MathExtras.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "llvm-MathExtras.h"; path = "runtime/llvm-MathExtras.h"; sourceTree = "<group>"; };
+		0EBF3A5D225DA1810028FCE7 /* llvm-type_traits.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "llvm-type_traits.h"; path = "runtime/llvm-type_traits.h"; sourceTree = "<group>"; };
+		0EBF3A5E225DA1810028FCE7 /* llvm-AlignOf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "llvm-AlignOf.h"; path = "runtime/llvm-AlignOf.h"; sourceTree = "<group>"; };
 		0ED599BA1F78106200919904 /* objc-object.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-object.h"; path = "runtime/objc-object.h"; sourceTree = "<group>"; };
 		0ED599BC1F78108700919904 /* objc-locks-old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-locks-old.h"; path = "runtime/objc-locks-old.h"; sourceTree = "<group>"; };
 		0ED599BD1F78108700919904 /* objc-cache-old.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "objc-cache-old.h"; path = "runtime/objc-cache-old.h"; sourceTree = "<group>"; };
@@ -597,6 +613,7 @@
 				08FB7795FE84155DC02AAC07 /* Source */,
 				838485B20D6D67F900CEA253 /* Other */,
 				1AB674ADFE9D54B511CA2CBB /* Products */,
+				0EBF3A56225DA09A0028FCE7 /* Recovered References */,
 			);
 			name = objc;
 			sourceTree = "<group>";
@@ -826,6 +843,23 @@
 			path = CF/Examples;
 			sourceTree = "<group>";
 		};
+		0EBF3A56225DA09A0028FCE7 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				0ED599BC1F78108700919904 /* objc-locks-old.h */,
+				0ED599C31F78108900919904 /* objc-env.h */,
+				0ED599BE1F78108700919904 /* objc-locks.h */,
+				0ED599C41F78108900919904 /* objc-cache.h */,
+				0ED599C21F78108800919904 /* objc-locks-new.h */,
+				0ED599BD1F78108700919904 /* objc-cache-old.h */,
+				0ED599C11F78108800919904 /* objc-lockdebug.h */,
+				0ED599BA1F78106200919904 /* objc-object.h */,
+				0ED599C01F78108800919904 /* objcrt.h */,
+				0ED599BF1F78108800919904 /* objcrt.c */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		1AB674ADFE9D54B511CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -850,6 +884,14 @@
 		838485C60D6D687700CEA253 /* Public Headers */ = {
 			isa = PBXGroup;
 			children = (
+				0EBF3A59225DA1800028FCE7 /* arm64-asm.h */,
+				0EBF3A5B225DA1800028FCE7 /* isa.h */,
+				0EBF3A5E225DA1810028FCE7 /* llvm-AlignOf.h */,
+				0EBF3A57225DA1800028FCE7 /* llvm-DenseMap.h */,
+				0EBF3A58225DA1800028FCE7 /* llvm-DenseMapInfo.h */,
+				0EBF3A5C225DA1810028FCE7 /* llvm-MathExtras.h */,
+				0EBF3A5D225DA1810028FCE7 /* llvm-type_traits.h */,
+				0EBF3A5A225DA1800028FCE7 /* objc-ptrauth.h */,
 				83A4AEDD1EA08C5700ACADDE /* ObjectiveC.apinotes */,
 				83A4AED71EA06D9D00ACADDE /* module.modulemap */,
 				83F4B52615E843B100E0926F /* NSObjCRuntime.h */,
@@ -924,13 +966,6 @@
 			name = "Project Headers";
 			sourceTree = "<group>";
 		};
-		F9BCC72A205C6A1600DD9AFC /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -958,6 +993,7 @@
 				838485BF0D6D687300CEA253 /* hashtable2.h in Headers */,
 				0E16C9591F0BCE0400716784 /* CFURLPriv.h in Headers */,
 				0E16C9101F0BCE0300716784 /* CFLocaleInternal.h in Headers */,
+				0EBF3A65225DA1810028FCE7 /* llvm-type_traits.h in Headers */,
 				838486260D6D68F000CEA253 /* List.h in Headers */,
 				0E16C92F1F0BCE0300716784 /* CFSet.h in Headers */,
 				838485C30D6D687300CEA253 /* maptable.h in Headers */,
@@ -983,9 +1019,12 @@
 				0E16C9551F0BCE0400716784 /* CFURL.h in Headers */,
 				0E16C9051F0BCE0300716784 /* CFError_Private.h in Headers */,
 				0E16C8DB1F0BCE0300716784 /* CFBag.h in Headers */,
+				0EBF3A61225DA1810028FCE7 /* arm64-asm.h in Headers */,
 				0E16C9411F0BCE0300716784 /* CFStringEncodingConverterPriv.h in Headers */,
 				0E16C9241F0BCE0300716784 /* CFPlugInCOM.h in Headers */,
+				0EBF3A60225DA1810028FCE7 /* llvm-DenseMapInfo.h in Headers */,
 				0E16C9261F0BCE0300716784 /* CFPreferences.h in Headers */,
+				0EBF3A62225DA1810028FCE7 /* objc-ptrauth.h in Headers */,
 				83BE02E80FCCB24D00661494 /* objc-file-old.h in Headers */,
 				0E16C90E1F0BCE0300716784 /* CFLocale.h in Headers */,
 				0E16C9161F0BCE0300716784 /* CFMessagePort.h in Headers */,
@@ -1000,12 +1039,14 @@
 				0E16C8FA1F0BCE0300716784 /* CFCharacterSet.h in Headers */,
 				0E16C96A1F0BCE0400716784 /* CoreFoundation_Prefix.h in Headers */,
 				0E16C94F1F0BCE0300716784 /* CFUniCharPriv.h in Headers */,
+				0EBF3A5F225DA1810028FCE7 /* llvm-DenseMap.h in Headers */,
 				838485FB0D6D68A200CEA253 /* objc-initialize.h in Headers */,
 				0E16C8DD1F0BCE0300716784 /* CFBase.h in Headers */,
 				0E16C9121F0BCE0300716784 /* CFLogUtilities.h in Headers */,
 				0E16C9441F0BCE0300716784 /* CFStringEncodingExt.h in Headers */,
 				0E16C8F51F0BCE0300716784 /* CFBurstTrie.h in Headers */,
 				7593EC58202248E50046AB96 /* objc-object.h in Headers */,
+				0EBF3A66225DA1810028FCE7 /* llvm-AlignOf.h in Headers */,
 				83112ED40F00599600A5FBAF /* objc-internal.h in Headers */,
 				0E16C9511F0BCE0400716784 /* CFUnicodeDecomposition.h in Headers */,
 				838485FE0D6D68A200CEA253 /* objc-load.h in Headers */,
@@ -1030,6 +1071,7 @@
 				83BE02EA0FCCB24D00661494 /* objc-runtime-old.h in Headers */,
 				0E16C93D1F0BCE0300716784 /* CFStringDefaultEncoding.h in Headers */,
 				0E16C9001F0BCE0300716784 /* CFDate.h in Headers */,
+				0EBF3A63225DA1810028FCE7 /* isa.h in Headers */,
 				0E16C9271F0BCE0300716784 /* CFPriv.h in Headers */,
 				0E16C8E71F0BCE0300716784 /* CFBitVector.h in Headers */,
 				8384860A0D6D68A200CEA253 /* objc-runtime.h in Headers */,
@@ -1064,6 +1106,7 @@
 				0E16C92B1F0BCE0300716784 /* CFRunLoop.h in Headers */,
 				83F4B52815E843B100E0926F /* NSObjCRuntime.h in Headers */,
 				0E16C94C1F0BCE0300716784 /* CFTree.h in Headers */,
+				0EBF3A64225DA1810028FCE7 /* llvm-MathExtras.h in Headers */,
 				83F4B52915E843B100E0926F /* NSObject.h in Headers */,
 				0E16C9351F0BCE0300716784 /* CFStorage.h in Headers */,
 				0E16C94E1F0BCE0300716784 /* CFUniChar.h in Headers */,
@@ -1290,11 +1333,7 @@
 				0E16C8E11F0BCE0300716784 /* CFBigNumber.c in Sources */,
 				0E16C9681F0BCE0400716784 /* CFXMLPreferencesDomain.c in Sources */,
 				83BE02E40FCCB23400661494 /* objc-file-old.mm in Sources */,
-				E8923DA1116AB2820071B552 /* a1a2-blocktramps-i386.s in Sources */,
 				0E16C9091F0BCE0300716784 /* CFICUConverters.c in Sources */,
-				E8923DA2116AB2820071B552 /* a1a2-blocktramps-x86_64.s in Sources */,
-				E8923DA3116AB2820071B552 /* a2a3-blocktramps-i386.s in Sources */,
-				E8923DA4116AB2820071B552 /* a2a3-blocktramps-x86_64.s in Sources */,
 				0E16C8FD1F0BCE0300716784 /* CFData.c in Sources */,
 				0E16C9661F0BCE0400716784 /* CFXMLParser.c in Sources */,
 				E8923DA5116AB2820071B552 /* objc-block-trampolines.mm in Sources */,
@@ -1302,7 +1341,6 @@
 				83B1A8BE0FF1AC0D0019EA5B /* objc-msg-simulator-i386.s in Sources */,
 				0E16C8DA1F0BCE0300716784 /* CFBag.c in Sources */,
 				83EB007B121C9EC200B92C16 /* objc-sel-table.s in Sources */,
-				8383A3A3122600E9009290B8 /* a1a2-blocktramps-arm.s in Sources */,
 				0E16C9211F0BCE0300716784 /* CFPlugIn_PlugIn.c in Sources */,
 				0E16C8FF1F0BCE0300716784 /* CFDate.c in Sources */,
 				0E16C8EE1F0BCE0300716784 /* CFBundle_Locale.c in Sources */,
@@ -1311,7 +1349,6 @@
 				0E16C9621F0BCE0400716784 /* CFXMLInputStream.c in Sources */,
 				0E16C8DE1F0BCE0300716784 /* CFBasicHash.c in Sources */,
 				0E16C9451F0BCE0300716784 /* CFStringEncodings.c in Sources */,
-				8383A3A4122600E9009290B8 /* a2a3-blocktramps-arm.s in Sources */,
 				0E16C90F1F0BCE0300716784 /* CFLocaleIdentifier.c in Sources */,
 				0E16C93E1F0BCE0300716784 /* CFStringEncodingConverter.c in Sources */,
 				0E16C92E1F0BCE0300716784 /* CFSet.c in Sources */,
@@ -1321,7 +1358,6 @@
 				0E16C9081F0BCE0300716784 /* CFFileUtilities.c in Sources */,
 				0E16C8F11F0BCE0300716784 /* CFBundle.c in Sources */,
 				0E16C9691F0BCE0400716784 /* CFXMLTree.c in Sources */,
-				8379996E13CBAF6F007C2B5F /* a1a2-blocktramps-arm64.s in Sources */,
 				9672F7EE14D5F488007CEC96 /* NSObject.mm in Sources */,
 				83725F4A14CA5BFA0014370E /* objc-opt.mm in Sources */,
 				0E16C8F71F0BCE0300716784 /* CFCalendar.c in Sources */,
