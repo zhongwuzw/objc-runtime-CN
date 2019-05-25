@@ -636,7 +636,8 @@ struct magic_t {
 };
     
 
-// AutoreleasePoolPage组成了一个双向链表，通过双向链表来实现一个栈，每一个AutoreleasePoolPage占用的大小都为4096B，AutoreleasePoolPage成员内存后的剩余空间用来存储加入自动释放池的对象指针，或压入新的AutoreleasePoolPage（压入POOL_BOUNDARY）
+// AutoreleasePoolPage组成了一个双向链表，通过双向链表来实现一个栈，每一个AutoreleasePoolPage占用的内存大小页对齐，AutoreleasePoolPage除去成员占用的内存，剩余空间用来存储加入自动释放池的对象指针，或压入新的AutoreleasePoolPage（压入POOL_BOUNDARY）
+  // AutoreleasePoolPage != @autoreleasepool {}
 class AutoreleasePoolPage 
 {
     // EMPTY_POOL_PLACEHOLDER is stored in TLS when exactly one pool is 
@@ -646,7 +647,7 @@ class AutoreleasePoolPage
 #   define EMPTY_POOL_PLACEHOLDER ((id*)1)
 
 #   define POOL_BOUNDARY nil
-    static pthread_key_t const key = AUTORELEASE_POOL_KEY;  // 注意，类实例创建时静态成员变量不占用内存
+    static pthread_key_t const key = AUTORELEASE_POOL_KEY;  // 注意，类实例创建时静态成员变量不占用类分配的内存
     static uint8_t const SCRIBBLE = 0xA3;  // 0xA3A3A3A3 after releasing
     static size_t const SIZE = 
 #if PROTECT_AUTORELEASEPOOL
@@ -750,7 +751,7 @@ class AutoreleasePoolPage
 
 
     id * begin() {
-        return (id *) ((uint8_t *)this+sizeof(*this));
+        return (id *) ((uint8_t *)this+sizeof(*this)); // 剩余空间存push objects
     }
 
     id * end() {

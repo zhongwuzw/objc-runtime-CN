@@ -112,6 +112,7 @@ static void grow_refs_and_insert(weak_entry_t *entry,
 static void append_referrer(weak_entry_t *entry, objc_object **new_referrer)
 {
     if (! entry->out_of_line()) {
+        // First stack otherwise heap.
         // Try to insert inline.
         for (size_t i = 0; i < WEAK_INLINE_COUNT; i++) {
             if (entry->inline_referrers[i] == nil) {
